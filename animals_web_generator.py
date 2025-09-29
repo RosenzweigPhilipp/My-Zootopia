@@ -8,25 +8,29 @@ def load_data(file_path):
 
 
 def generate_animals_string(animals_data):
-    """ Generates a string containing all animal information """
+    """ Generates HTML string containing all animal information as card items """
     output = ''
     for animal in animals_data:
+        # Start list item with card class
+        output += '<li class="cards__item">\n'
+        
         # Add name
-        output += f"Name: {animal['name']}\n"
+        output += f"Name: {animal['name']}<br/>\n"
         
         # Add diet if it exists
         if 'characteristics' in animal and 'diet' in animal['characteristics']:
-            output += f"Diet: {animal['characteristics']['diet']}\n"
+            output += f"Diet: {animal['characteristics']['diet']}<br/>\n"
         
         # Add first location if it exists
         if 'locations' in animal and len(animal['locations']) > 0:
-            output += f"Location: {animal['locations'][0]}\n"
+            output += f"Location: {animal['locations'][0]}<br/>\n"
         
         # Add type if it exists
         if 'characteristics' in animal and 'type' in animal['characteristics']:
-            output += f"Type: {animal['characteristics']['type']}\n"
+            output += f"Type: {animal['characteristics']['type']}<br/>\n"
         
-        output += "\n"  # Empty line for separation
+        # Close list item
+        output += '</li>\n'
     
     return output
 
