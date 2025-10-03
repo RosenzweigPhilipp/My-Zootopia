@@ -1,18 +1,51 @@
 import json
+import sys
+import os
 
 
 def load_data(file_path):
     """
-    Loads data from a JSON file.
+    Loads data from a JSON file with comprehensive error handling.
     
     Args:
         file_path (str): Path to the JSON file to load
         
     Returns:
         dict/list: Parsed JSON data
+        
+    Raises:
+        SystemExit: If file cannot be loaded or parsed
     """
-    with open(file_path, "r") as handle:
-        return json.load(handle)
+    try:
+        # Check if file exists
+        if not os.path.exists(file_path):
+            print(f"Error: File '{file_path}' not found.")
+            sys.exit(1)
+            
+        # Check if file is readable
+        if not os.access(file_path, os.R_OK):
+            print(f"Error: File '{file_path}' is not readable.")
+            sys.exit(1)
+            
+        # Attempt to open and parse the JSON file
+        with open(file_path, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+            
+        # Validate that we have data
+        if not data:
+            print(f"Warning: File '{file_path}' is empty or contains no data.")
+            
+        return data
+        
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON format in '{file_path}': {e}")
+        sys.exit(1)
+    except IOError as e:
+        print(f"Error: Could not read file '{file_path}': {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error loading '{file_path}': {e}")
+        sys.exit(1)
 
 
 def serialize_animal(animal_obj):
@@ -98,35 +131,6 @@ def generate_html(template_path, animals_data, output_path):
         output_file.write(html_content)
     
     print(f"HTML file generated successfully: {output_path}")
-
-
-def print_animal_info(animals_data):
-    """
-    Prints information for each animal to console.
-    
-    Args:
-        animals_data (list): List of animal dictionaries
-        
-    Note:
-        This function is kept for backward compatibility with Step 1.
-    """
-    for animal in animals_data:
-        # Print name
-        print(f"Name: {animal['name']}")
-        
-        # Print diet if it exists
-        if 'characteristics' in animal and 'diet' in animal['characteristics']:
-            print(f"Diet: {animal['characteristics']['diet']}")
-        
-        # Print first location if it exists
-        if 'locations' in animal and len(animal['locations']) > 0:
-            print(f"Location: {animal['locations'][0]}")
-        
-        # Print type if it exists
-        if 'characteristics' in animal and 'type' in animal['characteristics']:
-            print(f"Type: {animal['characteristics']['type']}")
-        
-        print()  # Empty line for separation
 
 
 def main():
